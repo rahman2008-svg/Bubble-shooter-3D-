@@ -1,11 +1,13 @@
 workflows:
   android-build:
     name: Bubble Shooter 3D Build Pipeline
-    max_build_duration: 30
-    instance_type: mac_mini_m1
+    max_build_duration: 60
+    instance_type: linux_x2
 
     environment:
       java: 17
+      android_signing:
+        - android-keystore
 
     triggering:
       events:
@@ -15,15 +17,31 @@ workflows:
         - pattern: main
           include: true
 
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+
     scripts:
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
       - name: Make Gradle executable
-        script: chmod +x gradlew
+        script: |
+          chmod +x gradlew
+
+      - name: Clean project
+        script: |
+          ./gradlew clean
 
       - name: Build Debug APK
-        script: ./gradlew clean assembleDebug
+        script: |
+          ./gradlew assembleDebug --stacktrace
 
       - name: Build Release APK
-        script: ./gradlew assembleRelease
+        script: |
+          ./gradlew assembleRelease --stacktrace
 
     artifacts:
       - app/build/outputs/apk/**/*.apk
