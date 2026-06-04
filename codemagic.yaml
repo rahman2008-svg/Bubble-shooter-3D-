@@ -1,0 +1,47 @@
+workflows:
+  android-build:
+    name: Bubble Shooter 3D Build Pipeline
+    max_build_duration: 30
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        - android-signing
+      vars:
+        JAVA_VERSION: "17"
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: main
+          include: true
+    scripts:
+      - name: Set up Java 17
+        script: |
+          sdk use java 17.0.10-sem || echo "Java version set via environment variables"
+
+      - name: Set up local.properties
+        script: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+      - name: Make Gradle Wrapper Executable
+        script: |
+          chmod +x gradlew
+
+      - name: Build Debug APK
+        script: |
+          ./gradlew assembleDebug
+
+      - name: Build Release APK
+        script: |
+          ./gradlew assembleRelease
+
+    artifacts:
+      - app/build/outputs/apk/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - princearabdurrahman57@gmail.com
+        notify:
+          success: true
+          failure: true

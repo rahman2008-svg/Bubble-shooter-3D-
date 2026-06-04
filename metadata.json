@@ -1,0 +1,6 @@
+{
+  "name": "Bubble Shooter 3D",
+  "description": "A performance-optimized 3D Bubble Shooter game with full sphere physics, level-scoring progression, a stunning canvas-based rendering engine, and offline Room database high-score tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
